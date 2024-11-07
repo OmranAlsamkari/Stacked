@@ -60,6 +60,7 @@ export default class Engine {
   #chageState(key) {
     if (key == "c") this.#grid.checkMoves();
     else if (key == "r") this.#grid = this.#grid.restart(this.#initializeGrid);
-    else this.#grid = this.#grid.moveGrid(actions[key]);
+    else if (["w", "a", "s", "d"].includes(key))
+      this.#grid = this.#grid.moveGrid(actions[key]);
   }
 }

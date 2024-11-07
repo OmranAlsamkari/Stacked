@@ -13,6 +13,7 @@ A colorful puzzle game, slide cells of the same color together to merge them. Ke
   - [Versions Log](#versions-log)
     - [Version 1.0.0](#version-100)
     - [Version 1.1.0](#version-110)
+    - [Version 1.1.1](#version-111)
   - [Licence](#licence)
 
 ## How to Start the Game
@@ -34,6 +35,8 @@ A colorful puzzle game, slide cells of the same color together to merge them. Ke
 - Added Helper Functions: Introduced utility functions to streamline code and enhance reusability.
 - Refactored Class Responsibility: Changed the class responsible for managing the general state.
 - Code Cleanup: The code is now cleaner and more organized, resulting in better readability and maintainability.
+### Version 1.1.1
+- Fixed a bug in entering actions.
 
 ## Licence
 [![MIT](https://img.shields.io/badge/License-MIT-blue)](https://opensource.org/license/mit)
