@@ -1,30 +1,17 @@
 import Cell from "./Cell.js";
+import { actions, deepCopy } from "../helpers/Helper.js";
 
 export default class Grid {
-  #width;
-  #height;
-  #initializeCells;
-  #initializeColors;
+  width;
+  height;
   #cells;
   #colors;
 
   constructor(width, height, cells, colors) {
-    this.#width = width;
-    this.#height = height;
-
-    this.#initializeCells = cells.map((a) => {
-      return [...a];
-    });
-    this.#cells = cells.map((a) => {
-      return [...a];
-    });
-
-    this.#initializeColors = colors.map((a) => {
-      return { ...a };
-    });
-    this.#colors = colors.map((a) => {
-      return { ...a };
-    });
+    this.width = width;
+    this.height = height;
+    this.#cells = deepCopy(cells);
+    this.#colors = deepCopy(colors);
   }
 
   draw() {
@@ -38,110 +25,32 @@ export default class Grid {
     });
     console.log();
   }
-  moveUp() {
-    for (let k = 0; k <= this.#colors.length - 1; k++) {
-      let color = this.#colors[k];
-      for (let i = color.i; i > 0; i--) {
-        if (this.#cells[i - 1][color.j].get() == ".") {
-          this.#switchCells({ i, j: color.j }, { i: i - 1, j: color.j });
-          this.#colors[k] = { i: i - 1, j: color.j };
-          continue;
-        }
-        if (
-          this.#cells[i - 1][color.j].get() == this.#cells[i][color.j].get()
-        ) {
-          this.#deleteCell(i, color.j);
-          this.#colors.splice(k, 1);
-          k--;
-          continue;
-        }
-        break;
-      }
-    }
-    this.#sort();
-    this.draw();
+  moveGrid(action) {
+    const newGrid = new Grid(
+      this.width,
+      this.height,
+      this.#cells,
+      this.#colors
+    );
+    newGrid.#move(action);
+    return newGrid;
   }
-  moveDown() {
-    for (let k = this.#colors.length - 1; k >= 0; k--) {
-      let color = this.#colors[k];
-      for (let i = color.i; i < this.#height - 1; i++) {
-        if (this.#cells[i + 1][color.j].get() == ".") {
-          this.#switchCells({ i, j: color.j }, { i: i + 1, j: color.j });
-          this.#colors[k] = { i: i + 1, j: color.j };
-          continue;
-        }
-        if (
-          this.#cells[i + 1][color.j].get() == this.#cells[i][color.j].get()
-        ) {
-          this.#deleteCell(i, color.j);
-          this.#colors.splice(k, 1);
-          k++;
-          continue;
-        }
-        break;
-      }
-    }
-    this.#sort();
-    this.draw();
-  }
-  moveLeft() {
-    for (let k = 0; k <= this.#colors.length - 1; k++) {
-      let color = this.#colors[k];
-      for (let j = color.j; j > 0; j--) {
-        if (this.#cells[color.i][j - 1].get() == ".") {
-          this.#switchCells({ i: color.i, j }, { i: color.i, j: j - 1 });
-          this.#colors[k] = { i: color.i, j: j - 1 };
-          continue;
-        }
-        if (
-          this.#cells[color.i][j - 1].get() == this.#cells[color.i][j].get()
-        ) {
-          this.#deleteCell(color.i, j);
-          this.#colors.splice(k, 1);
-          k--;
-          continue;
-        }
-        break;
-      }
-    }
-    this.#sort();
-    this.draw();
-  }
-  moveRight() {
-    for (let k = this.#colors.length - 1; k >= 0; k--) {
-      let color = this.#colors[k];
-      for (let j = color.j; j < this.#width - 1; j++) {
-        if (this.#cells[color.i][j + 1].get() == ".") {
-          this.#switchCells({ i: color.i, j }, { i: color.i, j: j + 1 });
-          this.#colors[k] = { i: color.i, j: j + 1 };
-          continue;
-        }
-        if (
-          this.#cells[color.i][j + 1].get() == this.#cells[color.i][j].get()
-        ) {
-          this.#deleteCell(color.i, j);
-          this.#colors.splice(k, 1);
-          k++;
-          continue;
-        }
-        break;
-      }
-    }
-    this.#sort();
-    this.draw();
-  }
-  restart() {
-    this.#cells = this.#initializeCells.map((a) => {
-      return [...a];
-    });
-    this.#colors = this.#initializeColors.map((a) => {
-      return { ...a };
-    });
-    console.log("game restarted");
-    this.draw();
+  restart(gird) {
+    const newGrid = new Grid(
+      gird.width,
+      gird.height,
+      gird.getCells(),
+      gird.getColors()
+    );
+    console.log("Game restarted.");
+    newGrid.draw();
+    return newGrid;
   }
   getCells() {
     return this.#cells;
+  }
+  getColors() {
+    return this.#colors;
   }
   checkState(grid) {
     return grid.getCells() === this.#cells;
@@ -157,52 +66,81 @@ export default class Grid {
         winState.add(value);
       }
     }
-    return winState.size == currentState.length ? true : false;
+    return winState.size == currentState.length;
   }
   checkMoves() {
-    const grid = new Grid(this.#width, this.#height, this.#cells, this.#colors);
-    console.log("Up move");
-    grid.moveUp();
-    const grid2 = new Grid(
-      this.#width,
-      this.#height,
-      this.#cells,
-      this.#colors
-    );
-    console.log("Down move");
-    grid2.moveDown();
-    const grid3 = new Grid(
-      this.#width,
-      this.#height,
-      this.#cells,
-      this.#colors
-    );
-    console.log("Left move");
-    grid3.moveLeft();
-    const grid4 = new Grid(
-      this.#width,
-      this.#height,
-      this.#cells,
-      this.#colors
-    );
-    console.log("Right move");
-    grid4.moveRight();
-
+    console.log("Up Move");
+    this.moveGrid(actions.w);
+    console.log("Down Move");
+    this.moveGrid(actions.s);
+    console.log("Left Move");
+    this.moveGrid(actions.a);
+    console.log("Right Move");
+    this.moveGrid(actions.d);
     console.log("Current Grid");
     this.draw();
   }
+  #move(action) {
+    let start, end, index;
+    const flag = action.name == "UP" || action.name == "LEFT";
+
+    const handleOuterCondition = () => {
+      end = flag ? this.#colors.length - 1 : 0;
+      return flag ? start <= end : start >= end;
+    };
+    const handleInnerCondition = () =>
+      flag ? index > 0 : index < this[action.onEeffected] - 1;
+
+    const handleOuterLoop = (sign) => (start += sign);
+    const handleInnerLoop = (sign) => (index += sign);
+
+    start = flag ? 0 : this.#colors.length - 1;
+
+    for (start; handleOuterCondition(); handleOuterLoop(flag ? +1 : -1)) {
+      let color = this.#colors[start];
+      for (
+        index = color[action.index];
+        handleInnerCondition();
+        handleInnerLoop(flag ? -1 : +1)
+      ) {
+        let CurrentI = action.i === 0 ? color.i : index;
+        let CurrentJ = action.j === 0 ? color.j : index;
+
+        let NextI = action.i === 0 ? color.i : index + action.i;
+        let NextJ = action.j === 0 ? color.j : index + action.j;
+
+        if (this.#cells[NextI][NextJ].get() == ".") {
+          this.#switchCells(
+            { i: CurrentI, j: CurrentJ },
+            { i: NextI, j: NextJ }
+          );
+          this.#colors[start] = { i: NextI, j: NextJ };
+          continue;
+        }
+        if (
+          this.#cells[NextI][NextJ].get() ==
+          this.#cells[CurrentI][CurrentJ].get()
+        ) {
+          this.#deleteCell(CurrentI, CurrentJ);
+          this.#colors.splice(start, 1);
+          handleOuterLoop(flag ? -1 : +1);
+          continue;
+        }
+        break;
+      }
+    }
+    this.#sort();
+    this.draw();
+  }
   #switchCells(oldCell, newCell) {
-    let temp = new Cell(this.#cells[oldCell.i][oldCell.j].get());
+    let tempCell = new Cell(this.#cells[oldCell.i][oldCell.j].get());
     this.#cells[oldCell.i][oldCell.j] = this.#cells[newCell.i][newCell.j];
-    this.#cells[newCell.i][newCell.j] = temp;
+    this.#cells[newCell.i][newCell.j] = tempCell;
   }
   #deleteCell(i, j) {
     this.#cells[i][j] = new Cell(".");
   }
   #sort() {
-    this.#colors.sort((a, b) => {
-      if (a.i !== b.i) return a.i - b.i;
-      return a.j - b.j;
-    });
+    this.#colors.sort((a, b) => (a.i !== b.i ? a.i - b.i : a.j - b.j));
   }
 }

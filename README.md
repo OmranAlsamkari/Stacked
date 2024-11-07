@@ -11,7 +11,8 @@ A colorful puzzle game, slide cells of the same color together to merge them. Ke
   - [How to Start the Game](#how-to-start-the-game)
   - [How to Play](#how-to-play)
   - [Versions Log](#versions-log)
-    - [Version 0.0.0](#version-000)
+    - [Version 1.0.0](#version-100)
+    - [Version 1.1.0](#version-110)
   - [Licence](#licence)
 
 ## How to Start the Game
@@ -29,6 +30,10 @@ A colorful puzzle game, slide cells of the same color together to merge them. Ke
 ### Version 1.0.0
 - Initialize the game.
 - Prepare Reactjs app.
+### Version 1.1.0
+- Added Helper Functions: Introduced utility functions to streamline code and enhance reusability.
+- Refactored Class Responsibility: Changed the class responsible for managing the general state.
+- Code Cleanup: The code is now cleaner and more organized, resulting in better readability and maintainability.
 
 ## Licence
 [![MIT](https://img.shields.io/badge/License-MIT-blue)](https://opensource.org/license/mit)
